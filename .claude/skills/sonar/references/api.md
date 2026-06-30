@@ -18,22 +18,6 @@ sonar api post "/api/issues/do_transition" --data '{"issue":"AY..","transition":
   and require explicit user confirmation — out of scope for normal reporting.
 - Add `--verbose` (`-v`) to debug the request/response.
 - Returns the raw JSON from the SonarQube Web API.
-
-### Relationship to `curl`
-
-These two are equivalent — prefer `sonar api` because it manages auth for you:
-
-```bash
-# Token-based HTTP Basic (token as username, empty password)
-curl -s -u "$SONAR_TOKEN:" \
-  "https://sonarqube.tooling.dvla.gov.uk/api/qualitygates/project_status?projectKey=VENG:vehicle-tax-rate-service"
-
-# Same call via the CLI (no token handling needed)
-sonar api get "/api/qualitygates/project_status?projectKey=VENG:vehicle-tax-rate-service"
-```
-
-Only fall back to `curl -u "$SONAR_TOKEN:"` if the CLI is unavailable.
-
 ---
 
 ## Branch Quality Report
@@ -45,40 +29,6 @@ branch.
 
 ```
 sonar api get "/api/qualitygates/project_status?projectKey=VENG:vehicle-tax-rate-service&branch=feature/VPASW-9781-reduce-cognitive-complexity"
-```
-
-Response shape:
-
-```json
-{
-  "projectStatus": {
-    "status": "ERROR",
-    "conditions": [
-      {
-        "status": "OK",
-        "metricKey": "new_coverage",
-        "comparator": "LT",
-        "errorThreshold": "80",
-        "actualValue": "80.6"
-      },
-      {
-        "status": "OK",
-        "metricKey": "new_duplicated_lines_density",
-        "comparator": "GT",
-        "errorThreshold": "3",
-        "actualValue": "0.0"
-      },
-      {
-        "status": "ERROR",
-        "metricKey": "new_violations",
-        "comparator": "GT",
-        "errorThreshold": "0",
-        "actualValue": "3"
-      }
-    ]
-  }
-}
-```
 
 Map `metricKey` → friendly name, `comparator`+`errorThreshold` → threshold
 (`LT`→`≥`, `GT`→`≤`), and `status` → ✅ OK / ❌ ERROR.
@@ -103,33 +53,6 @@ Key parameters:
 Each `issues[]` entry contains: `severity`, `rule` (e.g. `java:S1192`), `component`
 (`project:path/File.java`), `line`, and `message`. Use these for the violations
 table.
-
-### Step 3 — Render the report
-
-```
-SonarQube API — Branch Quality Report
-
-Branch:  feature/VPASW-9781-reduce-cognitive-complexity
-Project: VENG:vehicle-tax-rate-service
-Checked: <timestamp>
-
-Quality Gate: ❌ ERROR
-
-┌──────────────────────┬──────────┬────────┬───────────┐
-│ Condition            │ Status   │ Actual │ Threshold │
-├──────────────────────┼──────────┼────────┼───────────┤
-│ New code coverage    │ ✅ OK    │ 80.6%  │ ≥ 80%     │
-│ New duplicated lines │ ✅ OK    │ 0.0%   │ ≤ 3%      │
-│ New violations       │ ❌ ERROR │ 3      │ 0         │
-└──────────────────────┴──────────┴────────┴───────────┘
-
-New Violations (N)
-┌──────────┬────────────┬───────────────────────┬───────────────────────┐
-│ Severity │ Rule       │ File                  │ Issue                 │
-├──────────┼────────────┼───────────────────────┼───────────────────────┤
-│ ...      │ java:S1192 │ ExceptionContextBuilder.java:49 │ <message>   │
-└──────────┴────────────┴───────────────────────┴───────────────────────┘
-```
 
 If all new violations trace back to a merged PR rather than the branch's own
 changes, add an explanatory note (compare against the base branch / `main` issues to

@@ -11,32 +11,13 @@ Query the self-hosted SonarQube server using the official SonarQube CLI (`sonar`
 
 ## Setup Check
 
-Run this before any SonarQube operation:
+Before any operation, verify both — on failure, load **[references/setup.md](references/setup.md)**:
 
-```
-1. Check the CLI is installed:
-   → Run: which sonar
-   → If missing: GUIDE USER TO INSTALL (see bottom of this file)
+- `which sonar` — installed? If not, guide the user to install.
+- `sonar auth status` — authenticated to the DVLA server? If not, ask the user to
+  authenticate (agents can't — `sonar auth login` must be run by the user).
 
-2. Check authentication:
-   → Run: sonar auth status
-   → If authenticated against the DVLA server: PROCEED
-   → If not: ASK THE USER TO AUTHENTICATE (see below)
-```
-
-> **Agents cannot authenticate.** `sonar auth login` opens a browser and stores a
-> token in the system keychain — it MUST be run by the user, not the agent. If
-> `sonar auth status` shows no connection, stop and ask the user to run:
->
-> ```
-> sonar auth login --server https://sonarqube.tooling.dvla.gov.uk/
-> ```
->
-> Once they confirm, re-run `sonar auth status` and continue. After login, all
-> commands (including `sonar api`) use the stored credentials automatically — you
-> never handle the token directly.
-
----
+--
 
 ## Quick Reference
 
@@ -47,8 +28,7 @@ Run this before any SonarQube operation:
 | Search projects | `sonar list projects -q vehicle-tax` |
 | Issues in a project | `sonar list issues -p VENG:vehicle-tax-rate-service` |
 | Issues, LLM format | `sonar list issues -p <key> --format toon` |
-| Issues, human table | `sonar list issues -p <key> --format table` |
-| Filter by severity | `sonar list issues -p <key> --severities CRITICAL,BLOCKER` |
+| Filter by severity | `sonar list issues -p <key> --severities HIGH,BLOCKER` |
 | Filter by status | `sonar list issues -p <key> --statuses OPEN,CONFIRMED` |
 | Issues on a branch | `sonar list issues -p <key> --branch feature/VPASW-9781-...` |
 | Issues on a PR | `sonar list issues -p <key> --pull-request 151` |
@@ -62,48 +42,26 @@ Run this before any SonarQube operation:
 
 ## Severity & Status Values
 
-The valid severities depend on the server's rule mode — check both if unsure:
-
-| Mode | Severities |
-|------|-----------|
-| Multi-Quality Rule (MQR) | `INFO`, `LOW`, `MEDIUM`, `HIGH`, `BLOCKER` |
-| Standard Experience | `INFO`, `MINOR`, `MAJOR`, `CRITICAL`, `BLOCKER` |
-
+Severities (MQR mode): `INFO`, `LOW`, `MEDIUM`, `HIGH`, `BLOCKER`.
 Issue statuses: `OPEN`, `CONFIRMED`, `FALSE_POSITIVE`, `ACCEPTED`, `FIXED`.
 
 ---
 
 ## Output Format Convention
 
-- Default to `--format toon` when **you** are consuming results to reason over them
-  (it is optimised for LLM input).
-- Use `--format table` when presenting a short result set directly to the user.
-- Default (no `--format`) is JSON — use it when you need to parse specific fields
-  (e.g. building a report) or pipe into other commands.
-
----
-
-## Workflow — Discover Projects
-
-If the user names a project loosely, find its exact key first:
-
-```
-sonar list projects -q "vehicle tax"
-```
-
-Project keys look like `VENG:vehicle-tax-rate-service` (group:project). Always
-confirm the exact key before querying issues or quality gates.
+- Default to `--format toon` optimised for LLM input.
+- Default (no `--format`) is JSON — when you need to parse specific fields (e.g. building a report) or pipe into other commands, eg. (`jq`).
 
 ---
 
 ## Workflow — Search Issues
 
-1. Resolve the project key (see above) if you don't already have it.
+1. Resolve the project key if you don't already have it.
 2. Apply filters from the request — severity, status, branch, PR.
 3. Run, e.g.:
    ```
    sonar list issues -p VENG:vehicle-tax-rate-service \
-     --severities CRITICAL,BLOCKER --statuses OPEN --format table
+     --severities HIGH,BLOCKER --statuses OPEN
    ```
 4. Summarise: group by severity or file, and surface the rule key + message.
 
@@ -154,30 +112,4 @@ This skill is **read-only**. Stick to querying.
 | Branch quality report / new violations | **Yes** — [references/api.md](references/api.md) |
 | Coverage, duplications, measures | **Yes** — [references/api.md](references/api.md) |
 | Security hotspots | **Yes** — [references/api.md](references/api.md) |
-
----
-
-## CLI Not Installed
-
-If `which sonar` finds nothing:
-
-```
-Install the SonarQube CLI:
-
-  # Linux / macOS
-  curl -o- https://raw.githubusercontent.com/SonarSource/sonarqube-cli/refs/heads/master/user-scripts/install.sh | bash
-
-  # Windows (PowerShell)
-  irm https://raw.githubusercontent.com/SonarSource/sonarqube-cli/refs/heads/master/user-scripts/install.ps1 | iex
-
-Then authenticate against the DVLA server (you must do this yourself):
-
-  sonar auth login --server https://sonarqube.tooling.dvla.gov.uk/
-
-Verify with:
-
-  sonar auth status
-```
-
-Docs: https://docs.sonarsource.com/sonarqube-cli · Commands:
-https://www.sonarsource.com/sonarqube/cli/commands.html
+| CLI install / authentication | **Yes** — [references/setup.md](references/setup.md) |
