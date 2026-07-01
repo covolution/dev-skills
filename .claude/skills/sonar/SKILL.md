@@ -43,6 +43,7 @@ Before any operation, verify both — on failure, load **[references/setup.md](r
 ## Severity & Status Values
 
 Severities (MQR mode): `INFO`, `LOW`, `MEDIUM`, `HIGH`, `BLOCKER`.
+
 Issue statuses: `OPEN`, `CONFIRMED`, `FALSE_POSITIVE`, `ACCEPTED`, `FIXED`.
 
 ---

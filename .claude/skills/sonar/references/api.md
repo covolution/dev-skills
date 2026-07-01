@@ -19,6 +19,36 @@ sonar api post "/api/issues/do_transition" --data '{"issue":"AY..","transition":
 - Add `--verbose` (`-v`) to debug the request/response.
 - Returns the raw JSON from the SonarQube Web API.
 ---
+## Useful Read Endpoints
+
+| Need | Endpoint |
+|------|----------|
+| Quality gate for a branch | `/api/qualitygates/project_status?projectKey=<key>&branch=<branch>` |
+| Quality gate for a PR | `/api/qualitygates/project_status?projectKey=<key>&pullRequest=<id>` |
+| Issue search | `/api/issues/search?componentKeys=<key>&resolved=false&...` |
+| New issues only | add `&inNewCodePeriod=true` to issue search |
+| Filter issue search | `&severities=`, `&statuses=`, `&types=`, `&rules=`, `&branch=`, `&pullRequest=` |
+| Measures (coverage, etc.) | `/api/measures/component?component=<key>&metricKeys=coverage,duplicated_lines_density,bugs,vulnerabilities,code_smells,ncloc&branch=<branch>` |
+| New-code measures | use `new_coverage`, `new_violations`, `new_duplicated_lines_density` metric keys |
+| List branches | `/api/project_branches/list?project=<key>` |
+| List PRs | `/api/project_pull_requests/list?project=<key>` |
+| Security hotspots | `/api/hotspots/search?projectKey=<key>&branch=<branch>` |
+| Project list | `/api/projects/search?q=<text>` |
+| Rule detail | `/api/rules/show?key=java:S1192` |
+
+Common metric keys for `/api/measures/component`: `coverage`, `new_coverage`,
+`duplicated_lines_density`, `new_duplicated_lines_density`, `bugs`,
+`vulnerabilities`, `code_smells`, `security_hotspots`, `ncloc`,
+`sqale_index` (technical debt), `reliability_rating`, `security_rating`.
+
+---
+## Pagination
+
+Issue/project search returns `paging: { pageIndex, pageSize, total }`. If
+`total > pageSize`, increase `ps` (max 500) or iterate `p=1,2,...`. The Web API
+caps total results at 10,000 — narrow with filters rather than deep paging.
+
+---
 
 ## Branch Quality Report
 
@@ -32,7 +62,7 @@ sonar api get "/api/qualitygates/project_status?projectKey=VENG:vehicle-tax-rate
 
 Map `metricKey` → friendly name, `comparator`+`errorThreshold` → threshold
 (`LT`→`≥`, `GT`→`≤`), and `status` → ✅ OK / ❌ ERROR.
-
+```
 ### Step 2 — New violations on the branch
 
 ```
@@ -57,38 +87,6 @@ table.
 If all new violations trace back to a merged PR rather than the branch's own
 changes, add an explanatory note (compare against the base branch / `main` issues to
 confirm).
-
----
-
-## Useful Read Endpoints
-
-| Need | Endpoint |
-|------|----------|
-| Quality gate for a branch | `/api/qualitygates/project_status?projectKey=<key>&branch=<branch>` |
-| Quality gate for a PR | `/api/qualitygates/project_status?projectKey=<key>&pullRequest=<id>` |
-| Issue search | `/api/issues/search?componentKeys=<key>&resolved=false&...` |
-| New issues only | add `&inNewCodePeriod=true` to issue search |
-| Filter issue search | `&severities=`, `&statuses=`, `&types=`, `&rules=`, `&branch=`, `&pullRequest=` |
-| Measures (coverage, etc.) | `/api/measures/component?component=<key>&metricKeys=coverage,duplicated_lines_density,bugs,vulnerabilities,code_smells,ncloc&branch=<branch>` |
-| New-code measures | use `new_coverage`, `new_violations`, `new_duplicated_lines_density` metric keys |
-| List branches | `/api/project_branches/list?project=<key>` |
-| List PRs | `/api/project_pull_requests/list?project=<key>` |
-| Security hotspots | `/api/hotspots/search?projectKey=<key>&branch=<branch>` |
-| Project list | `/api/projects/search?q=<text>` |
-| Rule detail | `/api/rules/show?key=java:S1192` |
-
-Common metric keys for `/api/measures/component`: `coverage`, `new_coverage`,
-`duplicated_lines_density`, `new_duplicated_lines_density`, `bugs`,
-`vulnerabilities`, `code_smells`, `security_hotspots`, `ncloc`,
-`sqale_index` (technical debt), `reliability_rating`, `security_rating`.
-
----
-
-## Pagination
-
-Issue/project search returns `paging: { pageIndex, pageSize, total }`. If
-`total > pageSize`, increase `ps` (max 500) or iterate `p=1,2,...`. The Web API
-caps total results at 10,000 — narrow with filters rather than deep paging.
 
 ---
 
