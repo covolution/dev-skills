@@ -1,20 +1,25 @@
 ---
 name: user-story
-description: Use when the user pastes a rough feature idea, ticket notes, or feature description and wants it structured; when refining or grooming backlog tickets; when creating acceptance criteria; or when the user mentions user stories, INVEST, or Given-When-Then.
+description: Use when the user mentions user stories, INVEST, or Given-When-Then; or when the user provides a rough feature idea, ticket notes, or feature description and wants it structured; when refining or grooming backlog tickets; when creating acceptance criteria.
 ---
 
 # User Story Writer
 
 Transform rough descriptions into well-structured user stories following Agile best practices and INVEST principles.
 
+## When Not To Use
+- Do not use when the user asks for direct code changes, debugging, or technical solution design.
+
 ## Process
 
 1. Read the user's input (pasted text, rough idea, or feature description)
-2. Transform it into the structured format below, applying the INVEST checklist
-3. Present in markdown for readability in the conversation
-4. Invite the user to refine — ask if anything needs adjusting (scope, role, criteria, etc.)
-5. Iterate until the user is satisfied
-6. Only once the user confirms they're happy (or explicitly asks for Jira), offer to push to Jira
+2. Identify whether role, goal, and value are clear enough to produce testable acceptance criteria
+3. Ask focused follow-up questions only if ambiguity blocks testable criteria
+4. Transform it into the structured format below, applying the INVEST checklist
+5. Present in markdown for readability in the conversation
+6. Invite the user to refine — ask if anything needs adjusting (scope, role, criteria, etc.)
+7. Iterate until the user is satisfied
+8. Only once the user confirms they're happy (or explicitly asks for Jira), offer to push to Jira
 
 ## INVEST Checklist
 
@@ -26,6 +31,20 @@ Apply each before presenting the story:
 - **Estimable** — scope is clear enough for a team to size it. Flag unknowns in Context.
 - **Small** — deliverable within a single sprint. If not, propose splitting.
 - **Testable** — every acceptance criterion can pass or fail objectively.
+
+## Story Splitting
+
+When a story fails **Small** or **Independent**, split it. Each slice should still deliver end-to-end user value — never split into technical layers (e.g. "build the API" then "build the UI"). Common patterns:
+
+- **By workflow step** — separate stages of a process (e.g. "search results" vs. "checkout" vs. "confirmation").
+- **By operation (CRUD)** — deliver create first, then read/update/delete as their own stories.
+- **By happy path vs. edge cases** — ship the core flow first; handle errors, empty states, and validation as follow-ups.
+- **By data variation** — support one type/format first (e.g. credit card), add others later (PayPal, bank transfer).
+- **By business rule** — start with the simplest rule set, add complex rules (discounts, tiers, regions) incrementally.
+- **By interface or platform** — deliver web first, then mobile; or one locale before full internationalization.
+- **By effort (spike then build)** — if a story isn't Estimable, split off a time-boxed spike to remove the unknown.
+
+When you split, flag it to the user: propose the slices, note which delivers value first, and keep each slice independently shippable.
 
 ## Output Format (Conversation)
 
@@ -69,7 +88,7 @@ h3. Acceptance Criteria
 ### Title
 - Infer from the description if none provided
 - Brief, action-oriented (e.g., "Enable user profile updates")
-- Under 12 words
+- Under 10 words
 - Focus on the capability being delivered, not implementation details
 
 ### User Story Statement
