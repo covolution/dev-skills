@@ -67,20 +67,57 @@ As a <specific user role>, I want <desired capability> so that <business value/b
 
 ## Output Format (Jira)
 
-When pushing to Jira, convert to wiki markup:
+When pushing to Jira Cloud, represent the description as Atlassian Document Format (ADF) JSON. Do not send Jira wiki markup such as `h2.`, `h3.`.
+
+Use ADF nodes for the story structure:
+- A level-2 `heading` for the title
+- Level-3 `heading` nodes for `Description`, `Context`, and `Acceptance Criteria`
+- `paragraph` nodes for the story statement and context
+- A `bulletList` containing `listItem` and `paragraph` nodes for the acceptance criteria
+- `link` marks for reference URLs and `code` marks for resource names or paths when useful
+
+For the Atlassian CLI, pass the serialized ADF document with `--description-file` or `--description`:
 
 ```
-h2. <Title>
-
-h3. Description
-As a <specific user role>, I want <desired capability> so that <business value/benefit>.
-
-*Context:*
-<2-4 sentences of background, assumptions, constraints, or business rules>
-
-h3. Acceptance Criteria
-* *Given* <precondition>, *When* <action>, *Then* <outcome>
-* *Given* <precondition>, *When* <action>, *Then* <outcome>
+{
+  "version": 1,
+  "type": "doc",
+  "content": [
+    {
+      "type": "heading",
+      "attrs": { "level": 2 },
+      "content": [{ "type": "text", "text": "<Title>" }]
+    },
+    {
+      "type": "heading",
+      "attrs": { "level": 3 },
+      "content": [{ "type": "text", "text": "Description" }]
+    },
+    {
+      "type": "paragraph",
+      "content": [{ "type": "text", "text": "As a <specific user role>, I want <desired capability> so that <business value/benefit>." }]
+    },
+    {
+      "type": "heading",
+      "attrs": { "level": 3 },
+      "content": [{ "type": "text", "text": "Acceptance Criteria" }]
+    },
+    {
+      "type": "bulletList",
+      "content": [
+        {
+          "type": "listItem",
+          "content": [
+            {
+              "type": "paragraph",
+              "content": [{ "type": "text", "text": "Given <precondition>, When <action>, Then <outcome>" }]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
 ```
 
 ## Writing Guidelines
@@ -157,7 +194,7 @@ Reset links must expire after 30 minutes and be single-use. Assumes email is the
 Only offer Jira integration when the user explicitly asks to push to Jira, or confirms they're happy with the story and you're wrapping up. Do not mention Jira unprompted after the first draft.
 
 When the user is ready:
-1. Confirm a Jira integration (skill or MCP tool) is available. If none is available, output the wiki markup for the user to paste manually and stop.
-2. Convert the output to Jira wiki markup format (as shown above)
+1. Confirm a Jira integration (skill or MCP tool) is available. If none is available, output the story in conversation Markdown plus the ADF JSON document for manual use and stop.
+2. Convert the output to an ADF JSON document (as shown above); preserve the conversation format for the user-facing preview
 3. Ask for the Jira project key and issue type (Story, Task, etc.) if not already known
 4. Create or update the ticket via the available Jira integration
