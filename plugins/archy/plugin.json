@@ -1,0 +1,9 @@
+{
+	"$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+	"name": "archy",
+	"version": "0.0.1",
+	"description": "Software architecture and design workflows: C4 and Mermaid diagrams, and code-flow analysis before changes.",
+	"license": "Apache-2.0",
+	"repository": "https://github.com/covolution/dev-skills",
+	"keywords": ["architecture", "c4", "mermaid", "diagrams"]
+}

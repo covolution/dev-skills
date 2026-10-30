@@ -7,20 +7,24 @@ This repository publishes [Agent Plugins](https://agent-plugins.org/) containing
 | Plugin | Skills |
 | --- | --- |
 | `dev-agile` | `jira`, `sonar`, `user-story`, `work-on-ticket` |
+| `archy` | `c4-architecture`, `mermaid-diagrams`, `lightweight-implementation-analysis-protocol` |
 
 ## Repository layout
 
 ```text
 .github/plugin/marketplace.json   # marketplace listing the plugins below
 plugins/
-└── dev-agile/
-    ├── plugin.json               # Agent Plugins v1.0.0 manifest
+├── dev-agile/
+│   ├── plugin.json               # Agent Plugins v1.0.0 manifest
+│   └── skills/<skill-name>/SKILL.md
+└── archy/
+    ├── plugin.json
     └── skills/<skill-name>/SKILL.md
 .claude/skills -> ../plugins/dev-agile/skills   # symlink for tools that read .claude/skills
 .agents/skills -> ../.claude/skills             # symlink for tools that read .agents/skills
 ```
 
-`plugins/dev-agile/skills` is the single source of truth. The symlinks point into the plugin, so the plugin itself never references files outside its root.
+Each plugin's `skills/` directory is the single source of truth. The `.claude/skills` symlink only exposes `dev-agile`; install `archy` through the marketplace.
 
 ## Installation
 
@@ -31,15 +35,16 @@ Add the marketplace, then install the plugin (marketplace name `dev-skills`):
 ```
 /plugin marketplace add covolution/dev-skills
 /plugin install dev-agile@dev-skills
+/plugin install archy@dev-skills
 ```
 
-Or from a terminal: `copilot plugin marketplace add covolution/dev-skills` and `copilot plugin install dev-agile@dev-skills`.
+Or from a terminal: `copilot plugin marketplace add covolution/dev-skills` and `copilot plugin install <plugin>@dev-skills`.
 
 ### VS Code
 
 1. Run **Chat: Open Customizations** from the Command Palette and select **Browse**.
 2. Open the source menu, select **Configure Marketplaces** > **Add Marketplace**, and enter `covolution/dev-skills`.
-3. Select the `dev-agile` plugin and choose **Install**.
+3. Select the plugin you want (`dev-agile` or `archy`) and choose **Install**.
 
 Alternatively, add `covolution/dev-skills` to the `chat.plugins.marketplaces` setting.
 
