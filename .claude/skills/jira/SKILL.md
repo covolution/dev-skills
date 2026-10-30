@@ -7,6 +7,10 @@ description: Use this skill for anything involving Jira - viewing tickets, searc
 
 Natural language Jira interaction using the official Atlassian CLI (`acli`) or Atlassian MCP tools.
 
+## Content Format
+
+All Jira content fields, including descriptions and comment bodies, must use serialized Atlassian Document Format (ADF) JSON when creating or updating content. Do not use Jira wiki markup or plain-text payloads for these fields. Scalar fields such as summaries, labels, assignees, and statuses remain unchanged.
+
 ## Backend Detection
 
 Run this check first before any Jira operation:
@@ -45,7 +49,7 @@ Run this check first before any Jira operation:
 | Edit issue | `acli jira workitem edit --key "KEY-123" --summary "..."` |
 | Transition issue | `acli jira workitem transition --key "KEY-123" --status "Done"` |
 | Assign to me | `acli jira workitem assign --key "KEY-123" --assignee "@me"` |
-| Add comment | `acli jira workitem comment create --key "KEY-123" --body "..."` |
+| Add comment | `acli jira workitem comment create --key "KEY-123" --body '<ADF JSON>'` (or `--body-file`) |
 | List comments | `acli jira workitem comment list --key "KEY-123"` |
 | Open in browser | `acli jira workitem view KEY-123 --web` |
 | Board issues (Kanban) | `acli jira workitem search --jql "project = PROJ AND statusCategory != Done ORDER BY updated DESC"` |
@@ -109,8 +113,8 @@ For simple fetches and searches the Quick Reference above is sufficient — no n
 1. If the issue key isn't already known, ask for it or search for the ticket
 2. Show the user a draft of the comment before posting
 3. Get confirmation, then add the comment:
-   - **acli:** `acli jira workitem comment create --key "KEY-123" --body "..."`
-   - For long multi-line comments, write to a file and use `--body-file`
+   - **acli:** pass the serialized ADF JSON with `--body` or `--body-file`
+   - For long multi-line comments, write the ADF JSON to a `.json` file and use `--body-file`
 4. Confirm it was added successfully
 
 ---
@@ -121,7 +125,7 @@ For simple fetches and searches the Quick Reference above is sufficient — no n
 2. Draft the ticket — show it to the user for review
 3. Create:
    - **acli:** `acli jira workitem create --summary "..." --project "PROJ" --type "Bug"`
-   - For multi-line descriptions, write to a file and use `--description-file`
+   - Pass the description as serialized ADF JSON; for multi-line descriptions, write it to a `.json` file and use `--description-file`
 4. Return the new issue key
 
 ---
@@ -130,9 +134,10 @@ For simple fetches and searches the Quick Reference above is sufficient — no n
 
 1. Fetch current state first — never assume status, assignee, or description
 2. Show current → proposed changes and get approval
-3. For transitions, `acli` takes the status name directly (no transition ID needed):
+3. When changing a description or comment, pass the new content as serialized ADF JSON. Never use Jira wiki markup or plain text for content updates.
+4. For transitions, `acli` takes the status name directly (no transition ID needed):
    - `acli jira workitem transition --key "KEY-123" --status "In Progress"`
-4. Verify after applying
+5. Verify after applying
 
 ---
 
