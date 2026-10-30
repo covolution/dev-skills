@@ -45,7 +45,7 @@ Create a new issue.
 - `projectKey` (required): Target project
 - `issueType` (required): Issue type (Story, Bug, Task, Epic, etc.)
 - `summary` (required): Issue title
-- `description`: Detailed description
+- `description`: Detailed description as serialized ADF JSON; do not send Jira wiki markup or plain text
 - `assignee`: Account ID — use `lookupJiraAccountId` first
 - `priority`: Priority name (Highest, High, Medium, Low, Lowest)
 - `labels`: Array of labels
@@ -57,7 +57,7 @@ mcp__atlassian__createJiraIssue(
   projectKey: "PROJ",
   issueType: "Story",
   summary: "Implement user authentication",
-  description: "Add OAuth2 authentication flow...",
+  description: '{"version":1,"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Add OAuth2 authentication flow..."}]}]}',
   labels: ["backend", "security"]
 )
 ```
@@ -69,6 +69,7 @@ Update an existing issue.
 **Parameters:**
 - `issueKey` (required): Issue to update
 - Any field to update (summary, description, assignee, etc.)
+- `description` and other content fields must be serialized ADF JSON; do not send Jira wiki markup or plain text
 
 ---
 
@@ -116,7 +117,7 @@ Add a comment to an issue.
 
 **Parameters:**
 - `issueKey` (required): Issue key
-- `body` (required): Comment text (supports Jira markdown)
+- `body` (required): Comment content as serialized ADF JSON
 
 ---
 
@@ -285,25 +286,9 @@ curl -s -u "$JIRA_USER:$JIRA_API_TOKEN" \
 
 ## Description Formatting
 
-### Jira Wiki Markup (older instances)
+### Atlassian Document Format (ADF)
 
-```
-h1. Heading 1
-*bold* _italic_ -strikethrough-
-
-{code:java}
-// code here
-{code}
-
-* Bullet list
-# Numbered list
-||Header 1||Header 2||
-|Cell 1|Cell 2|
-```
-
-### Atlassian Document Format (ADF, newer instances)
-
-For `createJiraIssue`, descriptions may use ADF:
+Descriptions and comment bodies must be serialized ADF JSON. Do not use Jira wiki markup or plain text:
 
 ```json
 {

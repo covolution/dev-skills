@@ -145,32 +145,23 @@ acli jira workitem create \
   --type "Task" \
   --assignee "@me"
 
-# With inline description
+# With an inline ADF JSON description
 acli jira workitem create \
   --summary "Fix null pointer in payment service" \
   --project "PROJ" \
   --type "Bug" \
-  --description "NPE thrown when cart is empty at checkout"
+  --description '{"version":1,"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"NPE thrown when cart is empty at checkout"}]}]}'
 
-# Multi-line description — write to a file first
-cat > /tmp/jira_desc.txt <<'EOF'
-## Problem
-Users see a blank screen after login on Safari 16+.
-
-## Steps to reproduce
-1. Open Safari 16
-2. Log in with any valid account
-3. Observe blank screen
-
-## Expected
-Dashboard should load.
+# Multi-line description — write serialized ADF JSON to a file first
+cat > /tmp/jira_desc.json <<'EOF'
+{"version":1,"type":"doc","content":[{"type":"heading","attrs":{"level":2},"content":[{"type":"text","text":"Problem"}]},{"type":"paragraph","content":[{"type":"text","text":"Users see a blank screen after login on Safari 16+."}]},{"type":"heading","attrs":{"level":2},"content":[{"type":"text","text":"Expected"}]},{"type":"paragraph","content":[{"type":"text","text":"Dashboard should load."}]}]}
 EOF
 
 acli jira workitem create \
   --summary "Blank screen after login on Safari" \
   --project "PROJ" \
   --type "Bug" \
-  --description-file /tmp/jira_desc.txt
+  --description-file /tmp/jira_desc.json
 
 # Create subtask (requires parent)
 acli jira workitem create \
@@ -206,11 +197,11 @@ acli jira workitem edit --key "PROJ-123" --assignee "@me"
 # Remove assignee
 acli jira workitem edit --key "PROJ-123" --remove-assignee
 
-# Update description inline
-acli jira workitem edit --key "PROJ-123" --description "New description text"
+# Update description with inline ADF JSON
+acli jira workitem edit --key "PROJ-123" --description '{"version":1,"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"New description text"}]}]}'
 
-# Update description from file (use for multi-line)
-acli jira workitem edit --key "PROJ-123" --description-file /tmp/new_desc.txt
+# Update description from an ADF JSON file (use for multi-line)
+acli jira workitem edit --key "PROJ-123" --description-file /tmp/new_desc.json
 
 # Update labels
 acli jira workitem edit --key "PROJ-123" --labels "backend,urgent"
@@ -278,30 +269,26 @@ acli jira workitem assign \
 ## Comments
 
 ```bash
-# Add a comment
-acli jira workitem comment create --key "PROJ-123" --body "This is my comment"
+# Add a comment with inline ADF JSON
+acli jira workitem comment create --key "PROJ-123" --body '{"version":1,"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"This is a comment"}]}]}'
 
-# Multi-line comment — write to a file first
-cat > /tmp/jira_comment.txt <<'EOF'
-Investigated today. Root cause is in the auth middleware.
-
-Next steps:
-- Fix the token validation logic
-- Add a regression test
+# Multi-line comment — write serialized ADF JSON to a file first
+cat > /tmp/jira_comment.json <<'EOF'
+{"version":1,"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Investigated today. Root cause is in the auth middleware."}]},{"type":"paragraph","content":[{"type":"text","text":"Next steps: fix the token validation logic and add a regression test."}]}]}
 EOF
 
-acli jira workitem comment create --key "PROJ-123" --body-file /tmp/jira_comment.txt
+acli jira workitem comment create --key "PROJ-123" --body-file /tmp/jira_comment.json
 
 # Comment on issues matching a JQL query
 acli jira workitem comment create \
   --jql "project = PROJ AND status = Done AND updated <= -7d" \
-  --body "Closing as stale"
+  --body '{"version":1,"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Closing as stale"}]}]}'
 
 # Open editor to write the comment
 acli jira workitem comment create --key "PROJ-123" --editor
 
-# Edit the last comment you wrote on an issue
-acli jira workitem comment create --key "PROJ-123" --body "Updated comment" --edit-last
+# Edit the last comment you wrote on an issue with ADF JSON
+acli jira workitem comment create --key "PROJ-123" --body '{"version":1,"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Updated comment"}]}]}' --edit-last
 
 # List comments on an issue
 acli jira workitem comment list --key "PROJ-123"
