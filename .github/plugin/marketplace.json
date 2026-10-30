@@ -13,6 +13,12 @@
 			"description": "Agile delivery workflows for DVLA teams: Jira, SonarQube, user stories, and starting work on tickets.",
 			"version": "0.0.1",
 			"source": "./plugins/dev-agile"
+		},
+		{
+			"name": "archy",
+			"description": "Software architecture and design workflows: C4 and Mermaid diagrams, and code-flow analysis before changes.",
+			"version": "0.0.1",
+			"source": "./plugins/archy"
 		}
 	]
 }
