@@ -1,0 +1,18 @@
+{
+	"name": "dev-skills",
+	"owner": {
+		"name": "covolution"
+	},
+	"metadata": {
+		"description": "Agent plugins for agile software delivery workflows.",
+		"version": "1.0.0"
+	},
+	"plugins": [
+		{
+			"name": "dev-agile",
+			"description": "Agile delivery workflows for DVLA teams: Jira, SonarQube, user stories, and starting work on tickets.",
+			"version": "0.0.1",
+			"source": "./plugins/dev-agile"
+		}
+	]
+}

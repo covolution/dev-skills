@@ -1,0 +1,8 @@
+{
+	"$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+	"name": "dev-agile",
+	"version": "0.0.1",
+	"description": "Agile delivery workflows for DVLA teams: Jira, SonarQube, user stories, and starting work on tickets.",
+	"license": "Apache-2.0",
+	"repository": "https://github.com/covolution/dev-skills"
+}
