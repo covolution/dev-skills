@@ -5,7 +5,7 @@
 	},
 	"metadata": {
 		"description": "Agent plugins for agile software delivery workflows.",
-		"version": "1.0.0"
+		"version": "1.0.1"
 	},
 	"plugins": [
 		{
@@ -16,7 +16,7 @@
 		},
 		{
 			"name": "archy",
-			"description": "Software architecture and design workflows: C4 and Mermaid diagrams, and code-flow analysis before changes.",
+			"description": "Software architecture and design workflows: C4 and Mermaid diagrams (with render validation), and code-flow analysis before changes.",
 			"version": "0.0.1",
 			"source": "./plugins/archy"
 		}

@@ -195,7 +195,7 @@ flowchart LR
 ## Common Pitfalls
 
 - **Breaking characters** - Avoid `{}` in comments, use proper escape sequences for special characters
-- **Syntax errors** - Misspellings break diagrams; validate syntax in Mermaid Live
+- **Syntax errors** - Misspellings break diagrams; check that they render with the `mermaid-validate` skill
 - **Overcomplexity** - Split complex diagrams into multiple focused views
 - **Missing relationships** - Document all important connections between entities
 

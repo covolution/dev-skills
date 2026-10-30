@@ -7,7 +7,7 @@ This repository publishes [Agent Plugins](https://agent-plugins.org/) containing
 | Plugin | Skills |
 | --- | --- |
 | `dev-agile` | `jira`, `sonar`, `user-story`, `work-on-ticket` |
-| `archy` | `c4-architecture`, `mermaid-diagrams`, `lightweight-implementation-analysis-protocol` |
+| `archy` | `c4-architecture`, `mermaid-diagrams`, `mermaid-validate`, `lightweight-implementation-analysis-protocol` |
 
 ## Repository layout
 
